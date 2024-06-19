@@ -1,0 +1,66 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login Page";
+}
+
+<body class="login">
+
+<div>
+    <a class="hiddenanchor" id="signup"></a>
+    <a class="hiddenanchor" id="signin"></a>
+    <div class="login_wrapper">
+        <div class="animate form login_form">
+            <section class="login_content">
+
+
+
+                    <form method="post" asp-controller="Home" asp-action="Index" >
+              
+
+                        <div>
+                          @*   <label asp-for="Username"></label> *@
+                            <input asp-for="Username" class="form-control" placeholder="Username" />
+                            <span asp-validation-for="Username"></span>
+                        </div>
+
+                        <div>
+                            @* <label asp-for="Password"></label> *@
+                            <input asp-for="Password" class="form-control" placeholder="Password" />
+                            <span asp-validation-for="Password"></span>
+                        </div>
+
+                   
+                        <input type="submit" value="Login" />
+
+
+                        <div class="clearfix"></div>
+
+                        <div class="separator">
+                            <p class="change_link">
+                                New to site?
+                                <a href="#signup" class="to_register"> Create Account </a>
+                            </p>
+
+                            <div class="clearfix"></div>
+                            <br />
+
+                            <div>
+                                <h1><i class="fa fa-google-plus"></i> GIG Green!</h1>
+                                <p>©2016 All Rights Reserved. GIG Green!. Privacy and Terms</p>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+            </section>
+           
+        </div>
+
+
+    </div>
+
+    
+</div>
+
+ </body>

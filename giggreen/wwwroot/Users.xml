@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Users>
+<User>
+	<Username>Saif.Khan</Username>
+	<Password>admin123</Password>
+	<RoleName>Admin</RoleName>
+</User>
+<User>
+		<Username>Malik.Hassan</Username>
+		<Password>admin123</Password>
+		<RoleName>Claim_Admin</RoleName>
+</User>
+
+<User>
+		<Username>Test.User1</Username>
+		<Password>admin123</Password>
+		<RoleName>Claim</RoleName>
+</User>
+
+<User>
+		<Username>Test.User2</Username>
+		<Password>admin123</Password>
+		<RoleName>UnderWriting</RoleName>
+</User>
+
+<User>
+		<Username>Test.User3</Username>
+		<Password>admin123</Password>
+		<RoleName>UnderWriting_Claim</RoleName>
+</User>
+
+	<User>
+		<Username>Test.User4</Username>
+		<Password>admin123</Password>
+		<RoleName>UnderWriting_Claim1</RoleName>
+	</User>
+</Users>

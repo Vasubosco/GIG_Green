@@ -1,0 +1,275 @@
+﻿@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model List<DHPOViewModel>
+
+@{
+    ViewData["Title"] = "DHPO Page";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<style>
+    /* Define a custom class for the options container */
+    .options-container {
+        border: 1px solid #ccc;
+        /*  padding: 10px; Optional: Add padding for spacing */
+    }
+    /* CSS for search box style */
+    #myTable thead input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+        font-size: 12px; /* Smaller font size */
+        height: 24px; /* Smaller height */
+        margin: 2px 0; /* Smaller margin */
+    }
+</style>
+
+
+
+
+
+<div class="x_content">
+
+    <form method="post" asp-controller="DHPO" asp-action="Index">
+        @*
+        <input type="text" name="CustomerName" />
+        <input type="date" name="dateRangeFrom1" class="form-control" id="dateRangeFrom1" placeholder="Select date range" /> *@
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="font-weight-bold text-black" for="category">DHPO Service</label>
+                <select class="form-control" id="category" required name="category">
+                    <option value="2">Claim Submission</option>
+                    <option value="8">Remittance Advice</option>
+                    <option value="16">Prior Request</option>
+                    <option value="32">Prior Authorization</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="font-weight-bold text-black" class="font-weight-bold text-black" for="dateRangeFrom">Date From</label>
+                <input type="date" class="form-control" required name="dateRangeFrom" id="dateRangeFrom" placeholder="Select date range" />
+
+
+            </div>
+            <div class="form-group col-md-4">
+                <label class="font-weight-bold text-black" for="dateRangeTo">Date To</label>
+                <input type="date" class="form-control" required name="dateRangeTo" id="dateRangeTo" placeholder="Select date range" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="font-weight-bold text-black" for="searchFile">Transaction File Name</label>
+                <input type="text" class="form-control" name="searchFile" id="searchFile" placeholder="Search by File name" />
+            </div>
+            <div class="form-group col-md-4">
+                <label class="font-weight-bold text-black" for="searchPartner">e-Partner</label>
+                <input type="text" class="form-control" name="searchPartner" id="searchPartner" placeholder="Search by Partner name" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <div class="options-container">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="transactionStatus" id="transactionNew" value="1" />
+                                <label class="form-check-label" for="transactionNew">New Only </label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="transactionStatus" id="transactionStatusDownloaded" value="2" />
+                                <label class="form-check-label" for="transactionStatusDownloaded">Downloaded</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="transactionStatus" id="transactionStatusAll" value="3" checked />
+                                <label class="form-check-label  font-weight-bold text-black" for="transactionStatusAll">All</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="options-container">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="direction" id="directionRecieved" value="2" />
+                                <label class="form-check-label" for="directionRecieved">Recieved Only </label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="direction" id="directionSent" value="1" />
+                                <label class="form-check-label " for="directionSent">Sent Only </label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="direction" id="directionAll" value="3" checked />
+                                <label class="form-check-label  font-weight-bold text-black" for="directionAll">All</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-primary">Search</button>
+
+    </form>
+
+    <br />
+    <!-- Button to trigger the getSelectedRowsData function -->
+    <button type="button" class="btn btn-success" id="btnExportJSON">Export Selected records</button>
+    <br />
+
+
+    <div class="table-responsive">
+        <table class="table table-striped jambo_table bulk_action" id="myTable">
+            <thead>
+                <tr class="headings">
+                    <th>
+                        <input type="checkbox" id="check-all" class="flat">
+                    </th>
+                    <th class="column-title">FileID  </th>
+                    <th class="column-title">FileName </th>
+                    <th class="column-title">SenderID </th>
+                    <th class="column-title">ReceiverID </th>
+                    <th class="column-title">TransactionDate </th>
+                    <th class="column-title">RecordCount </th>
+                    <th class="column-title">IsDownloaded </th>
+                    @*
+                    <th class="column-title no-link last">
+                    <span class="nobr">Action</span>
+                    </th> *@
+                    <th class="bulk-actions" colspan="7">
+                        <a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (DHPOViewModel file in Model)
+                    {
+                        <tr class="even pointer">
+                            <td class="a-center ">
+                                <input type="checkbox" class="flat" name="table_records">
+                            </td>
+                            <td class=" ">@file.FileID</td>
+                            <td class=" ">@file.FileName</td>
+                            <td class=" ">@file.SenderID</td>
+                            <td class=" ">@file.ReceiverID</td>
+                            <td class=" ">@file.TransactionDate</td>
+                            <td class=" ">@file.RecordCount</td>
+                            <td class=" ">@file.IsDownloaded</td>
+                        </tr>
+                    }
+
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script type="text/javascript">
+    $('#myTable thead th:not(:first-child)').each(function () {
+        var title = $(this).text();
+        $(this).html('<div>' + title + '</div><input type="text" class="form-control" placeholder="Search ' + title + '" />');
+    });
+
+    var table = $('#myTable').DataTable({
+        "pageLength": 1000
+    });
+
+    table.columns(':not(:first-child)').every(function () {
+        var that = this;
+
+        $('input', this.header()).on('keyup change', function () {
+            if (that.search() !== this.value) {
+                that
+                    .search(this.value)
+                    .draw();
+            }
+        });
+    });  
+
+
+    // Function to read selected rows and convert to JSON
+    function getSelectedRowsData() {
+        var selectedData = [];
+        $('#myTable input[type="checkbox"]:checked').each(function () {
+            var row = $(this).closest('tr');
+            var rowData = {
+                FileID: row.find('td').eq(1).text(),
+                FileName: row.find('td').eq(2).text(),
+                SenderID: row.find('td').eq(3).text(),
+                ReceiverID: row.find('td').eq(4).text(),
+                TransactionDate: row.find('td').eq(5).text(),
+                RecordCount: row.find('td').eq(6).text(),
+                IsDownloaded: row.find('td').eq(7).text()
+            };
+            selectedData.push(rowData);
+        });
+        return selectedData;
+    }
+
+    // Event handler for the export button
+    $('#btnExportJSON').on('click', function () {
+        // Create loader element
+        $('body').css('opacity', '0.5');
+        var loader = $('<div id="loader" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;"><img src="path/to/loader.gif" alt="Loader"></div>');
+
+        // Append loader to the body
+        $('body').append(loader);
+        
+        var jsonData = getSelectedRowsData();
+        console.log(jsonData);
+        if (jsonData.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/DHPO/ExportData",
+                data: JSON.stringify(jsonData),
+                contentType: "application/json; charset=utf-8",
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (response) {
+                    // Convert the response to a blob
+                    var blob = new Blob([response], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "DHPOData.xlsx";
+                    link.click();
+                    loader.remove();
+                    $('body').css('opacity', '1');
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log('Error:', textStatus);
+                    loader.remove();
+                    $('body').css('opacity', '1');
+                }
+            });
+        } else {
+            toastr.error('No data selected to export.');
+            loader.remove();
+            $('body').css('opacity', '1');
+        }
+    });
+
+</script>
