@@ -1,6 +1,6 @@
 ﻿@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model List<DHPOViewModel>
+@model DhpoPageViewModel
 
 @{
     ViewData["Title"] = "DHPO Page";
@@ -23,6 +23,16 @@
         height: 24px; /* Smaller height */
         margin: 2px 0; /* Smaller margin */
     }
+
+    /* Loader CSS */
+    #loader {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 9999; /* Sit on top */
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8) url('https://i.stack.imgur.com/MnyxU.gif') no-repeat center center;
+    }
 </style>
 
 
@@ -38,7 +48,7 @@
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label class="font-weight-bold text-black" for="category">DHPO Service</label>
-                <select class="form-control" id="category" required name="category">
+                <select class="form-control" id="category" required name="category" asp-for="Category">
                     <option value="2">Claim Submission</option>
                     <option value="8">Remittance Advice</option>
                     <option value="16">Prior Request</option>
@@ -47,26 +57,25 @@
             </div>
             <div class="form-group col-md-4">
                 <label class="font-weight-bold text-black" class="font-weight-bold text-black" for="dateRangeFrom">Date From</label>
-                <input type="date" class="form-control" required name="dateRangeFrom" id="dateRangeFrom" placeholder="Select date range" />
+                <input type="date" class="form-control" required name="dateRangeFrom" asp-for="DateRangeFrom" id="dateRangeFrom" placeholder="Select date range" />
 
 
             </div>
             <div class="form-group col-md-4">
                 <label class="font-weight-bold text-black" for="dateRangeTo">Date To</label>
-                <input type="date" class="form-control" required name="dateRangeTo" id="dateRangeTo" placeholder="Select date range" />
+                <input type="date" class="form-control" required required asp-for="DateRangeTo" name="dateRangeTo" id="dateRangeTo" placeholder="Select date range" />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label class="font-weight-bold text-black" for="searchFile">Transaction File Name</label>
-                <input type="text" class="form-control" name="searchFile" id="searchFile" placeholder="Search by File name" />
+                <input type="text" class="form-control" asp-for="SearchFile" name="searchFile" id="searchFile" placeholder="Search by File name" />
             </div>
             <div class="form-group col-md-4">
                 <label class="font-weight-bold text-black" for="searchPartner">e-Partner</label>
-                <input type="text" class="form-control" name="searchPartner" id="searchPartner" placeholder="Search by Partner name" />
+                <input type="text" class="form-control" asp-for="SearchPartner" i name="searchPartner" id="searchPartner" placeholder="Search by Partner name" />
             </div>
-        </div>
-
+        </div>        
         <div class="form-row">
             <div class="form-group col-md-4">
                 <div class="options-container">
@@ -125,7 +134,8 @@
         <button type="submit" class="btn btn-primary">Search</button>
 
     </form>
-
+    <!-- Loader Element -->
+    <div id="loader"></div>
     <br />
     <!-- Button to trigger the getSelectedRowsData function -->
     <button type="button" class="btn btn-success" id="btnExportJSON">Export Selected records</button>
@@ -157,9 +167,9 @@
             </thead>
             <tbody>
 
-                @if (Model != null && Model.Count > 0)
+                @if (Model != null && Model.TableData.Count > 0)
                 {
-                    @foreach (DHPOViewModel file in Model)
+                    @foreach (DHPOViewModel file in Model.TableData)
                     {
                         <tr class="even pointer">
                             <td class="a-center ">
@@ -188,6 +198,62 @@
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#myForm').on('submit', function () {
+            // Show the loader
+            $('#loader').show();
+        });
+
+
+
+        $('#dateRangeFrom').on('change', function () {
+            // Get the selected start date
+            var startDate = $(this).val();
+            if (startDate) {
+                // Parse the start date
+                var start = new Date(startDate);
+                // Calculate the end date (one month later)
+                var end = new Date(start);
+                end.setMonth(end.getMonth() + 1);
+
+                // Correct for month overflow
+                if (end.getMonth() > 11) {
+                    end.setFullYear(end.getFullYear() + 1);
+                    end.setMonth(end.getMonth() - 12);
+                }
+
+                // Handle cases where adding one month results in a day overflow
+                if (end.getDate() < start.getDate()) {
+                    end.setDate(0); // Set to the last day of the previous month
+                }
+
+                // Format the end date as YYYY-MM-DD
+                var dd = String(end.getDate()).padStart(2, '0');
+                var mm = String(end.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var yyyy = end.getFullYear();
+                var endDate = yyyy + '-' + mm + '-' + dd;
+
+                // Set the max attribute of the end date input
+                $('#dateRangeTo').attr('max', endDate);
+                // Set the min attribute to ensure end date is not before start date
+                $('#dateRangeTo').attr('min', startDate);
+                // Set the value of the end date input to the calculated end date
+                $('#dateRangeTo').val(endDate);
+            } else {
+                // If no start date is selected, remove the max and min attributes
+                $('#dateRangeTo').removeAttr('max');
+                $('#dateRangeTo').removeAttr('min');
+                // Clear the value of the end date input
+                $('#dateRangeTo').val('');
+            }
+        });
+    });
+
+
+
+
+
     $('#myTable thead th:not(:first-child)').each(function () {
         var title = $(this).text();
         $(this).html('<div>' + title + '</div><input type="text" class="form-control" placeholder="Search ' + title + '" />');
@@ -207,7 +273,7 @@
                     .draw();
             }
         });
-    });  
+    });
 
 
     // Function to read selected rows and convert to JSON
@@ -237,7 +303,7 @@
 
         // Append loader to the body
         $('body').append(loader);
-        
+
         var jsonData = getSelectedRowsData();
         console.log(jsonData);
         if (jsonData.length > 0) {

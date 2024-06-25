@@ -9441,11 +9441,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\D\\giggreen\\giggreen\\giggreen\\giggreen.csproj",
+      "projectUniqueName": "D:\\D\\Giggreen_git\\GIG_Green\\giggreen\\giggreen.csproj",
       "projectName": "giggreen",
-      "projectPath": "D:\\D\\giggreen\\giggreen\\giggreen\\giggreen.csproj",
+      "projectPath": "D:\\D\\Giggreen_git\\GIG_Green\\giggreen\\giggreen.csproj",
       "packagesPath": "C:\\Users\\Bsoft\\.nuget\\packages\\",
-      "outputPath": "D:\\D\\giggreen\\giggreen\\giggreen\\obj\\",
+      "outputPath": "D:\\D\\Giggreen_git\\GIG_Green\\giggreen\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -9459,7 +9459,7 @@
       ],
       "sources": {
         "C:\\Program Files\\dotnet\\library-packs": {},
-        "https://pkgs.dev.azure.com/ChampionXEnterprise-DevOPS/myApergy/_packaging/Championx_nuget_feed/nuget/v3/index.json": {}
+        "https://pkgs.dev.azure.com/ChampionXEnterprise-DevOPS/_packaging/ChampionXDigital_Nuget_Feed/nuget/v3/index.json": {}
       },
       "frameworks": {
         "net6.0": {

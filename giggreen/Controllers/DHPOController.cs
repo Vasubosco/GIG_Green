@@ -9,6 +9,8 @@ using System.Xml.Serialization;
 using System.Net;
 using System;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
+using System.Transactions;
 
 
 
@@ -161,7 +163,7 @@ namespace giggreen.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Index(string category, string dateRangeFrom, string dateRangeTo, string searchFile, string searchPartner)
+        public async Task<IActionResult> Index(string category, string dateRangeFrom, string dateRangeTo, string searchFile, string searchPartner,string transactionStatus, string direction)
         {
 
             var requestQueue = new ConcurrentQueue<string>();
@@ -174,7 +176,19 @@ namespace giggreen.Controllers
                 UseProxy = true,
             };
             model = bindtempdata();
-            return View(model);
+            var viewModel = new DhpoPageViewModel
+            {
+                Category = category,
+                DateRangeFrom = dateRangeFrom,
+                DateRangeTo = dateRangeTo,
+                SearchFile = searchFile,
+                SearchPartner = searchPartner,
+                TransactionStatus = transactionStatus,
+                Direction = direction,
+                TableData = model 
+            };
+            
+            return View(viewModel);
             // Replace with your actual SOAP endpoint URL and SOAPAction
 
             string soapAction = "https://www.shafafiya.org/v2/SearchTransactions";

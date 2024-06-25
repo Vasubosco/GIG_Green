@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PpSJCH7GO2U=",
+  "dgSpecHash": "qzn7it4CigQ=",
   "success": true,
-  "projectFilePath": "D:\\D\\giggreen\\giggreen\\giggreen\\giggreen.csproj",
+  "projectFilePath": "D:\\D\\Giggreen_git\\GIG_Green\\giggreen\\giggreen.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Bsoft\\.nuget\\packages\\closedxml\\0.95.4\\closedxml.0.95.4.nupkg.sha512",
     "C:\\Users\\Bsoft\\.nuget\\packages\\documentformat.openxml\\2.7.2\\documentformat.openxml.2.7.2.nupkg.sha512",
